@@ -1,0 +1,29 @@
+{% extends parent_template %}
+
+{% block title %}{{ Lang.get('user.linked_accounts') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    {{ Lang.get('user.linked_accounts') }}
+{% endblock %}
+
+{% block content %}
+
+    {% if not socialite_providers.isEmpty() %}
+        <div class="sp--m-3/2 sp-text-center">
+            {% include 'frontend.' ~ template ~ '.user.social_login_options' %}
+        </div>
+
+        <hr />
+    {% endif %}
+
+    {{ table.render()|raw }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/linked_account.js') }}"></script>
+
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    {{ table.script()|raw }}
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends parent_template %}
+
+{% block title %}
+    {{ Lang.get('core.email_queue') }}
+{% endblock %}
+
+{% block description %}
+    {{ Lang.get('core.email_queue_desc') }}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                <button class="sp-action sp-filter-grid">
+                    <i class="fas fa-filter"></i>
+                    <span class="sp-hidden sm:sp-inline">&nbsp;{{ Lang.get('general.filter') }}</span>
+                </button>
+                <button class="sp-action sp-filter-datepicker" data-active="0">
+                    <i class="fas fa-calendar"></i>
+                    <span class="sp-hidden xs:sp-inline">
+                        &nbsp;<span class="sp-filter-datepicker-text">{{ Lang.get('general.date') }}</span>
+                    </span>
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sp-sent-email sp-alert sp-alert-success sp-alert-sticky sp-hidden">
+        {{ Lang.get('messages.sent_email') }}
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div class="sp-filter-results sp-hidden">
+        <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+        <div class="sp-table">
+            <div class="sp-table-row">
+                <label>{{ Lang.choice('general.recipients', 2) }}:</label>
+                <div>
+                    {{ form_text('sSearch_1', null, {'placeholder': Lang.get('general.type_to_filter')}) }}<!--
+                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                </div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('ticket.from_name') }}:</label>
+                <div>
+                    {{ form_text('sSearch_2', null, {'placeholder': Lang.get('general.type_to_filter')}) }}<!--
+                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                </div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('ticket.from_address') }}:</label>
+                <div>
+                    {{ form_text('sSearch_3', null, {'placeholder': Lang.get('general.type_to_filter')}) }}<!--
+                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                </div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.get('ticket.subject') }}:</label>
+                <div>
+                    {{ form_text('sSearch_4', null, {'placeholder': Lang.get('general.type_to_filter')}) }}<!--
+                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                </div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.choice('general.message', 1) }}:</label>
+                <div>
+                    {{ form_text('sSearch_5', null, {'placeholder': Lang.get('general.type_to_filter')}) }}<!--
+                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                </div>
+            </div>
+            <div class="sp-table-row">
+                <label>{{ Lang.choice('general.status', 1) }}:</label>
+                <div>
+                    {{ form_select('sSearch_6', {'-1': Lang.get('general.select_value'), 0: Lang.get('general.pending'), 1: Lang.get('general.blocked')}) }}<!--
+                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+	{{ table.render()|raw }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/libs/daterangepicker/js/daterangepicker.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/datefiltering.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/queryfiltering.js') }}"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(document).on('click', '.send-button', function () {
+                $.get('{{ route('core.operator.emailqueue.send') }}', { 'id[]': [ $(this).data('id') ] })
+                    .done(function () {
+                        $('.sp-sent-email.sp-alert').show(500).delay(5000).hide(500);
+                        $('.dataTable').dataTable()._fnAjaxUpdate();
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        var message = '{{ Lang.get('log.email_send_failed') }}';
+                        try {
+                            var json = JSON.parse(jqXHR.responseText);
+                            if (typeof json.message !== 'undefined') {
+                                message = '<br />' + $('<div/>').text(json.message).html();
+                            }
+                        } catch (e) {
+                            // Invalid json.
+                        }
+
+                        Swal.fire({
+                            title: '{{ Lang.get('messages.error')  }}',
+                            html: message,
+                            icon: 'error'
+                        });
+                    });
+            });
+        });
+    </script>
+{% endblock %}

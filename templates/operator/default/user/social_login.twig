@@ -1,0 +1,34 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.get('user.social_login') }}
+{% endblock %}
+
+{% block description %}
+    {{ Lang.get('user.social_login_desc') }}
+{% endblock %}
+
+{% block content %}
+
+    {% for key, provider in providers %}
+        <div class="sp-flex sp-items-center sp-px-6 sp-py-3 sp-mb-6 sp-border sp-border-secondary sp-rounded">
+            <div class="sp-flex-grow">
+                <strong>{{ provider.name }}</strong>
+            </div>
+            <div class="sp-flex-none">
+                <a class="sp-button" href="{{ route('user.operator.sociallogin.edit', provider.name|lower) }}">
+                    {{ Lang.get('general.manage') }}
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="sp-alert sp-alert-info">
+        {{ Lang.get('user.manage_social_login_options', {'route': route('core.operator.integration.index')})|raw }}
+    </div>
+
+{% endblock %}

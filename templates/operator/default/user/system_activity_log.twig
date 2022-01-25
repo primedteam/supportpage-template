@@ -1,0 +1,77 @@
+{% extends parent_template %}
+
+{% block title %}
+	{% if record|default is not empty %}
+    	{{ record.formatted_name }} - {{ Lang.get('user.activity_log') }}
+    {% else %}
+    	{{ Lang.get('user.system_activity_log') }}
+    {% endif %}
+{% endblock %}
+
+{% block precontent %}
+    <div class="sp-quick-actions">
+        <ul>
+            <li class="sp-action-group sp-inline-block">
+                <button class="sp-action sp-filter-results">
+                    <i class="fas fa-filter"></i>
+                    <span class="sp-hidden sm:sp-inline">&nbsp;{{ Lang.get('general.filter') }}</span>
+                </button>
+                <button class="sp-action sp-filter-datepicker">
+                    <i class="fas fa-calendar"></i>
+                    <span class="sp-hidden xs:sp-inline">
+                        &nbsp;<span class="sp-filter-datepicker-text">{{ Lang.get('general.date') }}</span>
+                    </span>
+                </button>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+	{% if record|default is not empty %}
+        {% include 'operator.' ~ template ~ '.user.forms.user_tabs' %}
+    {% endif %}
+
+    <div class="sp-filter-results sp-hidden">
+        <h3>{{ Lang.get('general.filter_results') }}</h3>
+
+        <div class="sp-table">
+            {% if record is not defined %}
+                <div class="sp-table-row">
+                    <label>{{ Lang.choice('user.role', 1) }}:</label>
+                    <div>
+                        {{ form_select('sSearch_1', { '-1': Lang.get('general.select_value'), 0: Lang.get('general.system'), '1': Lang.choice('general.operator', 1), 2: Lang.choice('user.user', 1), 3: Lang.get('general.api') }) }}<!--
+                        -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                    </div>
+                </div>
+                <div class="sp-table-row">
+                    <label>{{ Lang.get('general.name') }}:</label>
+                    <div>
+                        {{ form_text('sSearch_2', null, { 'placeholder': Lang.get('general.type_to_filter') }) }}<!--
+                        -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                    </div>
+                </div>
+            {% endif %}
+            <div class="sp-table-row">
+                <label>{{ Lang.get('general.ip_address') }}:</label>
+                <div>
+                    {{ form_text('sSearch_3', null, { 'placeholder': Lang.get('general.enter_exact_ip') }) }}<!--
+                    -->{{ form_button('<i class="fas fa-fw fa-times"></i>', {'class': 'reset-filter'}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+	{{ table.render()|raw }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    <script src="{{ asset_rev('resources/assets/libs/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset_rev('resources/assets/libs/daterangepicker/js/daterangepicker.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/operator/js/datefiltering.js') }}"></script>
+    {{ table.script()|raw }}
+
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/general/js/queryfiltering.js') }}"></script>
+{% endblock %}

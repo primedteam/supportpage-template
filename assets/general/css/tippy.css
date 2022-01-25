@@ -1,0 +1,25 @@
+.tippy-box {
+    text-align: center;
+}
+
+.sp-theme-dark .tippy-box {
+    background: var(--color-primary-100);
+    color: var(--color-primary-900);
+    text-align: center;
+}
+
+.sp-theme-dark .tippy-box[data-placement^=top] > .tippy-arrow::before {
+    border-top-color: var(--color-primary-100);
+}
+
+.sp-theme-dark .tippy-box[data-placement^=bottom] > .tippy-arrow::before {
+    border-bottom-color: var(--color-primary-100);
+}
+
+.sp-theme-dark .tippy-box[data-placement^=left] > .tippy-arrow::before {
+    border-left-color: var(--color-primary-100);
+}
+
+.sp-theme-dark .tippy-box[data-placement^=right] > .tippy-arrow::before {
+    border-right-color: var(--color-primary-100);
+}

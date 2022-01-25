@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html class="sp-h-full">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <title>
+        {% if brand_name is not empty %}{{ brand_name }} - {% endif %}
+        {% block title %}{{ Lang.get('messages.error') }}{% endblock %}
+    </title>
+
+    <!-- CSS -->
+    {{ colourScheme|raw }}
+    <link data-include href="{{ asset_rev('resources/assets/frontend/css/main.min.css') }}" rel="stylesheet" type="text/css" />
+</head>
+
+<body class="{{ get_template_mode(false) }} sp-h-full sp-bg-secondary sp-text-primary print:sp-bg-primary" data-disable-pace>
+
+    <div class="sp-flex sp-flex-col sp-justify-center sp-min-h-full">
+        <div class="sp-container sp-px-6 sp-mx-auto sm:sp-w-128 sm:sp-px-0 xs:sp-my-8">
+            <i class="fas fa-exclamation-triangle sp-my-6 sp-text-6xl
+                      {% if get_template_mode(false) == 'sp-theme-dark' %}sp-text-primary{% else %}sp-text-primary-800{% endif %}"></i>
+            <h1 class="sp-text-3xl">{% block header %}{{ Lang.get('messages.error') }}{% endblock %}</h1>
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- Vendor -->
+    <script type="text/javascript" src="{{ asset_rev('resources/assets/libs/common.min.js') }}"></script>
+    <link data-include href="{{ asset_rev('resources/assets/libs/css/common.min.css') }}" rel="stylesheet" type="text/css" property="stylesheet" />
+
+    <!-- General -->
+    <script src="{{ asset_rev('resources/assets/general/js/main.js') }}"></script>
+
+</body>
+
+</html>

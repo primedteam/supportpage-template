@@ -1,0 +1,54 @@
+{% extends parent_template %}
+
+{% block sidebar %}
+    {% include 'operator.' ~ template ~ '.settings_sidebar' %}
+{% endblock %}
+
+{% block title %}
+    {{ Lang.get('general.edit_item', {'item': Lang.get('user.social_login')}) }} - {{ integration.name }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_open({'route': ['user.operator.sociallogin.update', provider], 'method': 'PUT', 'class': 'validate'}) }}
+
+        {{ form_hidden('provider', provider) }}
+
+        {% for brand in brands %}
+            <div class="sp-form-row">
+                {{ form_label('config[' ~ brand.id ~ '][enabled]', brands|length > 1 ? brand.name : Lang.get('general.enabled')) }}
+                <div class="sp-input-container">
+                    {% set configured = Config.get('integration.' ~ provider ~ '.brand-settings.' ~ brand.id ~ '.client_id') is not empty
+                        or Config.get('integration.' ~ provider ~ '.brand-settings.' ~ brand.id ~ '.client_secret') is not empty %}
+
+                    {% if configured %}
+                        {{ form_check('config[' ~ brand.id ~ '][enabled]', 1,
+                            providers[brand.id] is not empty ? providers[brand.id].enabled : true,
+                            {'class': 'sp-toggle', 'id': 'toggle_config[' ~ brand.id ~ '][enabled]'})
+                        }}
+                        <label for="{{ 'toggle_config[' ~ brand.id ~ '][enabled]' }}"></label>
+                        <div class="sp-description">
+                            <a href="{{ route(integration.getAddon().getSettingsRoute(), {'brand': brand.id}) }}">{{ Lang.get('general.manage_credentials') }}</a>
+                        </div>
+                    {% else %}
+                        <div class="sp-alert sp-alert-info sp-m-0">
+                            {{ Lang.get('core.create_credentials', {'route': route(integration.getAddon().getSettingsRoute(), {'brand': brand.id})})|raw }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="sp-form-button sp-fixed-bottom">
+            {{ form_submit(Lang.choice('general.submit', 1)) }}
+        </div>
+
+    {{ form_close() }}
+
+{% endblock %}
+
+{% block scripts_footer %}
+    {% if jsValidator|default is not empty %}
+        {{ jsValidator|raw }}
+    {% endif %}
+{% endblock %}
